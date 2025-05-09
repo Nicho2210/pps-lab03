@@ -5,7 +5,7 @@ import u03.Optionals.Optional.*
 
 import scala.annotation.tailrec
 
-object Sequences: // Essentially, generic linkedlists
+object Sequences: // Essentially, generic linked lists
 
   enum Sequence[E]:
     case Cons(head: E, tail: Sequence[E])
@@ -88,6 +88,7 @@ object Sequences: // Essentially, generic linkedlists
      * E.g., [30, 20, 10] => 10
      * E.g., [10, 1, 30] => 1
      */
+    @tailrec
     def min(s: Sequence[Int]): Optional[Int] = s match
       case Cons(h, t) if t == Nil() => Just(h)
       case Cons(h, Cons(h2, t2)) if h <= h2 => min(Cons(h, t2))
@@ -105,7 +106,7 @@ object Sequences: // Essentially, generic linkedlists
         case (Cons(h, t), f) if f => _evenIndices(t, !f, Cons(h, acc))
         case (Cons(h, t), f) if !f => _evenIndices(t, !f, acc)
         case _ => acc
-      } 
+      }
       reverse(_evenIndices(s, true, Nil()))
 
     /*
@@ -113,14 +114,25 @@ object Sequences: // Essentially, generic linkedlists
      * E.g., [10, 20, 30] => true if elem is 20
      * E.g., [10, 20, 30] => false if elem is 40
      */
-    def contains[A](s: Sequence[A])(elem: A): Boolean = ???
+    @tailrec
+    def contains[A](s: Sequence[A])(elem: A): Boolean = s match
+      case Cons(h, _) if h == elem => true
+      case Cons(h, t) if h != elem => contains(t)(elem)
+      case _ => false
 
     /*
      * Remove duplicates from the sequence
      * E.g., [10, 20, 10, 30] => [10, 20, 30]
      * E.g., [10, 20, 30] => [10, 20, 30]
      */
-    def distinct[A](s: Sequence[A]): Sequence[A] = ???
+    def distinct[A](s: Sequence[A]): Sequence[A] =
+      @annotation.tailrec
+      def _distinct(s: Sequence[A], acc: Sequence[A]): Sequence[A] = s match {
+        case Cons(h, t) if !contains(acc)(h) => _distinct(t, Cons(h, acc))
+        case Cons(h, t) if contains(acc)(h) => _distinct(t, acc)
+        case _ => acc
+      }
+      reverse(_distinct(s, Nil()))
 
     /*
      * Group contiguous elements in the sequence
@@ -128,19 +140,38 @@ object Sequences: // Essentially, generic linkedlists
      * E.g., [10, 20, 30] => [[10], [20], [30]]
      * E.g., [10, 20, 20, 30] => [[10], [20, 20], [30]]
      */
-    def group[A](s: Sequence[A]): Sequence[Sequence[A]] = ???
-
+    def group[A](s: Sequence[A]): Sequence[Sequence[A]] =
+      @annotation.tailrec
+      def _group(s: Sequence[A], current: Sequence[A], acc: Sequence[Sequence[A]]) : Sequence[Sequence[A]] = s match {
+        case Cons(h, t) if current == Nil() => _group(t, Cons(h, Nil()), acc)
+        case Cons(h, t) if current != Nil() => current match {
+          case Cons(ch, ct) if h == ch => _group(t, Cons(h, current), acc)
+          case _ => _group(t, Cons(h, Nil()), Cons(reverse(current), acc))
+        }
+        case _ => current match {
+          case Nil() => acc
+          case _ => Cons(reverse(current), acc)
+        }
+      }
+      reverse(_group(s, Nil(), Nil()))
     /*
      * Partition the sequence into two sequences based on the predicate
-     * E.g., [10, 20, 30] => ([10], [20, 30]) if pred is (_ < 20)
-     * E.g., [11, 20, 31] => ([20], [11, 31]) if pred is (_ % 2 == 0)
+     * E.g., [10, 20, 30] => ([10], [20, 30]) if predicate is (_ < 20)
+     * E.g., [11, 20, 31] => ([20], [11, 31]) if predicate is (_ % 2 == 0)
      */
-    def partition[A](s: Sequence[A])(pred: A => Boolean): (Sequence[A], Sequence[A]) = ???
+    def partition[A](s: Sequence[A])(predicate: A => Boolean): (Sequence[A], Sequence[A]) = 
+      @annotation.tailrec
+      def _partition(s: Sequence[A], predicate: A => Boolean, firstAcc: Sequence[A], secondAcc: Sequence[A]): (Sequence[A], Sequence[A]) = s match {
+        case Cons(h, t) if predicate(h) => _partition(t, predicate, Cons(h, firstAcc), secondAcc)
+        case Cons(h, t) => _partition(t, predicate, firstAcc, Cons(h, secondAcc))
+        case _ => (reverse(firstAcc), reverse(secondAcc))
+      }
+      _partition(s, predicate, Nil(), Nil())
 
   end Sequence
 end Sequences
 
-@main def trySequences =
+@main def trySequences(): Unit =
   import Sequences.*
   val sequence = Sequence.Cons(10, Sequence.Cons(20, Sequence.Cons(30, Sequence.Nil())))
   println(Sequence.sum(sequence)) // 30
