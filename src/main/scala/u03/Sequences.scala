@@ -47,7 +47,13 @@ object Sequences: // Essentially, generic linkedlists
      * E.g., [10], [] => []
      * E.g., [], [] => []
      */
-    def zip[A, B](first: Sequence[A], second: Sequence[B]): Sequence[(A, B)] = ???
+    def zip[A, B](first: Sequence[A], second: Sequence[B]): Sequence[(A, B)] =
+      @annotation.tailrec
+      def _zip(first: Sequence[A], second: Sequence[B], res: Sequence[(A, B)]): Sequence[(A, B)] = (first, second) match
+        case (Cons(h1, t1) , Cons(h2, t2)) => _zip(t1, t2, Cons((h1, h2), res))
+        case _ => res
+
+      reverse(_zip(first, second, Nil()))
 
     /*
      * Concatenate two sequences
@@ -55,7 +61,14 @@ object Sequences: // Essentially, generic linkedlists
      * E.g., [10], [] => [10]
      * E.g., [], [] => []
      */
-    def concat[A](s1: Sequence[A], s2: Sequence[A]): Sequence[A] = ???
+    def concat[A](s1: Sequence[A], s2: Sequence[A]): Sequence[A] =
+      @annotation.tailrec
+      def _concat(s1: Sequence[A], s2: Sequence[A], res: Sequence[A]): Sequence[A] = (s1, s2) match {
+        case (Cons(h1, t1), _) => _concat(t1, s2, Cons(h1, res))
+        case (Nil(), Cons(h2, t2)) => _concat(Nil(), t2, Cons(h2, res))
+        case _ => res
+      }
+      reverse(_concat(s1, s2, Nil()))
 
     /*
      * Reverse the sequence
@@ -63,7 +76,14 @@ object Sequences: // Essentially, generic linkedlists
      * E.g., [10] => [10]
      * E.g., [] => []
      */
-    def reverse[A](s: Sequence[A]): Sequence[A] = ???
+    def reverse[A](s: Sequence[A]): Sequence[A] =
+      @annotation.tailrec
+      def _reverse(s: Sequence[A], res: Sequence[A]): Sequence[A] = s match {
+        case Nil() => res
+        case Cons(h, t) => _reverse(t, Cons(h, res))
+      }
+
+      _reverse(s, Nil())
 
     /*
      * Map the elements of the sequence to a new sequence and flatten the result
