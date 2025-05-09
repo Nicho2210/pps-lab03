@@ -4,7 +4,8 @@ import u03.Sequences.*
 import Sequence.*
 import u02.Modules.*
 import Person.*
-import Teacher.*
+
+import scala.annotation.tailrec
 
 object Tasks extends App:
 
@@ -25,4 +26,10 @@ object Tasks extends App:
   def coursesFromPerson(s: Sequence[Person]): Sequence[String] = map(filter(s)(isTeacher))(teacherToCourse)
   def coursesFromPersonWithFlatMap(s: Sequence[Person]): Sequence[String] = flatMap(s)(mapper)
 
-//--------------------------------------------Task2.2--------------------------------------------------
+  //--------------------------------------------Task2.2--------------------------------------------------
+
+  @tailrec
+  def foldLeft[A, B](s: Sequence[A])(acc: B)(f: (B, A) => B): B = s match 
+    case Cons(h, t) => foldLeft(t)(f(acc, h))(f)
+    case Nil() => acc
+  

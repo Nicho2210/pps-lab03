@@ -27,3 +27,10 @@ class TasksTest:
     assertEquals(Nil(), coursesFromPersonWithFlatMap(Nil()))
     assertEquals(Nil(), coursesFromPersonWithFlatMap(sequenceStudents))
     assertEquals(Cons("MDP", Cons("IOT", Cons("CG", Nil()))), coursesFromPersonWithFlatMap(sequenceTeachers))
+
+  //--------------------------------------------Task2.1--------------------------------------------------
+
+  @Test def foldLeftTest(): Unit = {
+    val lst = Cons(3, Cons(7, Cons (1, Cons(5, Nil()))))
+    assertEquals(-16, foldLeft(lst)(0)(_ - _))
+  }
