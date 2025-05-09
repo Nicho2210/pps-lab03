@@ -30,7 +30,14 @@ class TasksTest:
 
   //--------------------------------------------Task2.1--------------------------------------------------
 
-  @Test def foldLeftTest(): Unit = {
+  @Test def foldLeftTest(): Unit =
     val lst = Cons(3, Cons(7, Cons (1, Cons(5, Nil()))))
     assertEquals(-16, foldLeft(lst)(0)(_ - _))
-  }
+
+//--------------------------------------------Task2.1--------------------------------------------------
+
+  @Test def countCoursesTest(): Unit =
+    assertEquals(1, countCourses(sequence))
+    assertEquals(0, countCourses(sequenceStudents))
+    assertEquals(3, countCourses(sequenceTeachers))
+    assertEquals(0, countCourses(Nil()))

@@ -29,7 +29,11 @@ object Tasks extends App:
   //--------------------------------------------Task2.2--------------------------------------------------
 
   @tailrec
-  def foldLeft[A, B](s: Sequence[A])(acc: B)(f: (B, A) => B): B = s match 
+  def foldLeft[A, B](s: Sequence[A])(acc: B)(f: (B, A) => B): B = s match
     case Cons(h, t) => foldLeft(t)(f(acc, h))(f)
     case Nil() => acc
-  
+
+  //--------------------------------------------Task2.3--------------------------------------------------
+
+  def countCourses(s: Sequence[Person]): Int =
+    foldLeft(Sequence.map(Sequence.filter(s)(isTeacher))(_ => 1))(0)(_ + _)
