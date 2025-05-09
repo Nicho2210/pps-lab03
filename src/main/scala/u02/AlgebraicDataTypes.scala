@@ -1,7 +1,7 @@
 package u02
 
 object AlgebraicDataTypes extends App:
-
+ 
   enum Person: // a sum type defined by enumerating various cases
     case Student(name: String, year: Int)
     case Teacher(name: String, course: String)
