@@ -68,7 +68,7 @@ object Sequences: // Essentially, generic linkedlists
      * E.g., [10] => [10]
      * E.g., [] => []
      */
-      
+
     def reverse[A](s: Sequence[A]): Sequence[A] = s match
       case Cons(head, tail) => concat(reverse(tail), Cons(head, Nil()))
       case Nil() => Nil()
@@ -79,7 +79,7 @@ object Sequences: // Essentially, generic linkedlists
      * E.g., [10, 20, 30], calling with mapper(v => [v]) returns [10, 20, 30]
      * E.g., [10, 20, 30], calling with mapper(v => Nil()) returns []
      */
-    def flatMap[A, B](s: Sequence[A])(mapper: A => Sequence[B]): Sequence[B] = s match 
+    def flatMap[A, B](s: Sequence[A])(mapper: A => Sequence[B]): Sequence[B] = s match
       case Cons(h, t) => concat(mapper(h), flatMap(t)(mapper))
       case Nil() => Nil()
 
@@ -88,14 +88,25 @@ object Sequences: // Essentially, generic linkedlists
      * E.g., [30, 20, 10] => 10
      * E.g., [10, 1, 30] => 1
      */
-    def min(s: Sequence[Int]): Optional[Int] = ???
+    def min(s: Sequence[Int]): Optional[Int] = s match
+      case Cons(h, t) if t == Nil() => Just(h)
+      case Cons(h, Cons(h2, t2)) if h <= h2 => min(Cons(h, t2))
+      case Cons(h, Cons(h2, t2)) if h2 < h => min(Cons(h2, t2))
+      case _ => Empty()
 
     /*
      * Get the elements at even indices
      * E.g., [10, 20, 30] => [10, 30]
      * E.g., [10, 20, 30, 40] => [10, 30]
      */
-    def evenIndices[A](s: Sequence[A]): Sequence[A] = ???
+    def evenIndices[A](s: Sequence[A]): Sequence[A] =
+      @annotation.tailrec
+      def _evenIndices(s: Sequence[A], flag: Boolean, acc: Sequence[A]): Sequence[A] = (s, flag) match {
+        case (Cons(h, t), f) if f => _evenIndices(t, !f, Cons(h, acc))
+        case (Cons(h, t), f) if !f => _evenIndices(t, !f, acc)
+        case _ => acc
+      } 
+      reverse(_evenIndices(s, true, Nil()))
 
     /*
      * Check if the sequence contains the element
