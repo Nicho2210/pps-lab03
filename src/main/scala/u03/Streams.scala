@@ -56,6 +56,11 @@ object Streams extends App:
       case (_, Cons(h2, t2)) => cons(h2(), interleave(empty(), t2()))
       case _ => empty()
 
+    def cycle[A](lst: Sequence[A]): Stream[A] =
+      def _cycle(l: Sequence[A]): Stream[A] = l match
+        case Sequence.Cons(h, t) => cons(h, _cycle(t))
+        case _ => cycle(lst)
+      _cycle(lst)
   end Stream
 end Streams
 
