@@ -26,7 +26,7 @@ object Streams extends App:
       case _ => Empty()
 
     def filter[A](stream: Stream[A])(pred: A => Boolean): Stream[A] = stream match
-      case Cons(head, tail) if (pred(head())) => cons(head(), filter(tail())(pred))
+      case Cons(head, tail) if pred(head()) => cons(head(), filter(tail())(pred))
       case Cons(head, tail) => filter(tail())(pred)
       case _ => Empty()
 
@@ -39,9 +39,11 @@ object Streams extends App:
 
     // Task 3
 
-    def takeWhile[A](stream: Stream[A])(pred: A => Boolean): Stream[A] = ???
+    def takeWhile[A](stream: Stream[A])(predicate: A => Boolean): Stream[A] = stream match 
+      case Cons(h, t) if predicate(h()) => cons(h(), takeWhile(t())(predicate))
+      case _ => Empty()
     
-    def interleave[A](stream1: Stream[A], stream2: Stream[A]): Stream[A] = ???
+    def fill[A](n: Int)(k: A): Stream[A] = take(iterate(k)(_ => k))(n)
   end Stream
 end Streams
 
