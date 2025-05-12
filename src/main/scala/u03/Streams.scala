@@ -39,20 +39,25 @@ object Streams extends App:
 
     // Task 3
 
-    def takeWhile[A](stream: Stream[A])(predicate: A => Boolean): Stream[A] = stream match 
+    def takeWhile[A](stream: Stream[A])(predicate: A => Boolean): Stream[A] = stream match
       case Cons(h, t) if predicate(h()) => cons(h(), takeWhile(t())(predicate))
       case _ => Empty()
     
     def fill[A](n: Int)(k: A): Stream[A] = take(iterate(k)(_ => k))(n)
+
+    def fibonacci(): Stream[Int] =
+      def _fibonacci(a: Int)(b: Int): Stream[Int] =
+        cons(a, _fibonacci(b)(a+b))
+      _fibonacci(0)(1)
   end Stream
 end Streams
 
-@main def tryStreams =
+@main def tryStreams(): Unit =
   import Streams.*
 
   val str1 = Stream.iterate(0)(_ + 1) // {0,1,2,3,..}
   val str2 = Stream.map(str1)(_ + 1) // {1,2,3,4,..}
-  val str3 = Stream.filter(str2)(x => (x < 3 || x > 20)) // {1,2,21,22,..}
+  val str3 = Stream.filter(str2)(x => x < 3 || x > 20) // {1,2,21,22,..}
   val str4 = Stream.take(str3)(10) // {1,2,21,22,..,28}
   println(Stream.toList(str4)) // [1,2,21,22,..,28]
 
