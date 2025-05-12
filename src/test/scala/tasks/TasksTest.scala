@@ -9,7 +9,7 @@ class TasksTest:
   import Sequence.*
   import u02.Modules.*
 
-  val sequence: Sequence[Person] = Cons(Person.Student("mario", 2015), Cons(Person.Teacher("Daniel", "OOP"), Cons(Person.Student("luigi", 2016), Nil())))
+  val sequence: Sequence[Person] = Cons(Person.Student("mario", 2015), Cons(Person.Teacher("daniel", "OOP"), Cons(Person.Student("luigi", 2016), Nil())))
   val sequenceStudents: Sequence[Person] = Cons(Person.Student("mario", 2015), Cons(Person.Student("luigi", 2016), Cons(Person.Student("luca", 2014), Nil())))
   val sequenceTeachers: Sequence[Person] = Cons(Person.Teacher("mario", "MDP"), Cons(Person.Teacher("luigi", "IOT"), Cons(Person.Teacher("luca", "CG"), Nil())))
 
