@@ -35,5 +35,13 @@ class StreamTest:
   @Test def fibonacci(): Unit =
     val fibonacci: Stream[Int] = Stream.fibonacci()
     assertEquals(Stream.toList(Stream.take(fibonacci)(5)), Cons (0, Cons (1, Cons (1, Cons (2, Cons (3, Nil ()))))))
-    
+
+  @Test def interleave(): Unit = 
+    val str1 = Stream.iterate(0)(_ + 1) // {0,1,2,3,..}
+    val str2 = Stream.iterate(100)(_ + 1) // {0,1,2,3,..}
+    assertEquals(empty(), Stream.interleave(empty(), empty()))
+    assertEquals(Cons (0, Cons (100, Cons (1, Cons (101, Cons (2, Nil ()))))), Stream.toList(Stream.interleave(Stream.take(str1)(3), Stream.take(str2)(2))))
+    assertEquals(Cons (0, Cons (100, Cons (101, Cons (102, Cons (103, Nil ()))))), Stream.toList(Stream.interleave(Stream.take(str1)(1), Stream.take(str2)(4))))
+    assertEquals(Cons (0, Cons (100, Cons (1, Cons (2, Cons (3, Nil ()))))), Stream.toList(Stream.interleave(Stream.take(str1)(4), Stream.take(str2)(1))))
+
 end StreamTest
